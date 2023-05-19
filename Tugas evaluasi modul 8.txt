@@ -1,0 +1,102 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class DatabaseManager {
+    private Connection connection;
+    
+    public void connect() {
+        try {
+            // Mengatur koneksi ke database SQLite
+            String url = "jdbc:sqlite:data.db";
+            connection = DriverManager.getConnection(url);
+            System.out.println("Terhubung ke database.");
+        } catch (SQLException e) {
+            System.out.println("Gagal terhubung ke database: " + e.getMessage());
+        }
+    }
+    
+    public void disconnect() {
+        try {
+            // Menutup koneksi database
+            if (connection != null) {
+                connection.close();
+                System.out.println("Terputus dari database.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Gagal memutus koneksi dari database: " + e.getMessage());
+        }
+    }
+    
+    public void insertData(String name, int age, String address) {
+        try {
+            // Menyiapkan pernyataan SQL untuk memasukkan data ke tabel
+            String sql = "INSERT INTO data (name, age, address) VALUES (?, ?, ?)";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            
+            // Mengatur nilai parameter
+            statement.setString(1, name);
+            statement.setInt(2, age);
+            statement.setString(3, address);
+            
+            // Eksekusi pernyataan SQL
+            statement.executeUpdate();
+            
+            System.out.println("Data berhasil ditambahkan ke database.");
+        } catch (SQLException e) {
+            System.out.println("Gagal menambahkan data ke database: " + e.getMessage());
+        }
+    }
+    
+    public void updateData(int id, String name, int age, String address) {
+        try {
+            // Menyiapkan pernyataan SQL untuk mengupdate data dalam tabel
+            String sql = "UPDATE data SET name = ?, age = ?, address = ? WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            
+            // Mengatur nilai parameter
+            statement.setString(1, name);
+            statement.setInt(2, age);
+            statement.setString(3, address);
+            statement.setInt(4, id);
+            
+            // Eksekusi pernyataan SQL
+            statement.executeUpdate();
+            
+            System.out.println("Data berhasil diupdate di database.");
+        } catch (SQLException e) {
+            System.out.println("Gagal mengupdate data di database: " + e.getMessage());
+        }
+    }
+    
+    public void deleteData(int id) {
+        try {
+            // Menyiapkan pernyataan SQL untuk menghapus data dari tabel
+            String sql = "DELETE FROM data WHERE id = ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            
+            // Mengatur nilai parameter
+            statement.setInt(1, id);
+            
+            // Eksekusi pernyataan SQL
+            statement.executeUpdate();
+            
+            System.out.println("Data berhasil dihapus dari database.");
+        } catch (SQLException e) {
+            System.out.println("Gagal menghapus data dari database: " + e.getMessage());
+        }
+    }
+    
+    public ResultSet searchDataByName(String name) {
+        try {
+            // Menyiapkan pernyataan SQL untuk mencari data berdasarkan nama
+            String sql = "SELECT * FROM data WHERE name LIKE ?";
+            PreparedStatement statement = connection.prepareStatement(sql);
+            
+            // Mengatur nilai parameter
+            statement.setString(1, "%" + name + "%");
+            
+            // Ek
+
